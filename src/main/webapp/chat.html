@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WebSocket Chat</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="chat-container">
+    <header>
+      Chat Application
+      <button id="logoutBtn" style="float:right ;">Logout</button>
+      <button id="createGroupBtn" style="float:left;">➕ Group</button>
+    </header>
+
+    <div class="chat-box" id="chatArea"></div>
+
+    <div class="chat-controls">
+      <label>Type:</label>
+      <select id="messageType">
+        <option value="broadcast">Broadcast</option>
+        <option value="private">Private</option>
+        <option value="group">Group (comma separated)</option>
+        <option value="group-message">Group Message</option>
+      </select>
+
+      <select id="groupSelect">
+        <option value="">-- Select Group --</option>
+      </select>
+
+      <input type="text" id="recipient" placeholder="Recipient(s)">
+      <input type="text" id="message" placeholder="Enter message">
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+
+  <div id="modalOverlay"></div>
+  <div id="groupModal">
+    <h3>Create Group</h3>
+    <input type="text" id="groupName" placeholder="Group Name"><br><br>
+    <input type="text" id="groupMembers" placeholder="Members (comma separated)"><br><br>
+    <button id="saveGroup">Create</button>
+    <button id="closeModal">Cancel</button>
+  </div>
+
+  <script src="js/chat.js"></script>
+</body>
+</html>

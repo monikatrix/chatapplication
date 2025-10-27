@@ -1,0 +1,221 @@
+@charset "UTF-8";
+/* 
+   GLOBAL RESET
+*/
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f3f7;
+  min-height: 100vh;
+}
+
+/*SIGNIN & SIGNUP PAGES */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.auth-box {
+  background: #fff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  width: 350px;
+  text-align: center;
+}
+
+.auth-box h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.auth-box input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.auth-box button {
+  width: 100%;
+  padding: 10px;
+  background: #0078ff;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.auth-box button:hover {
+  background: #005fcc;
+}
+
+/*
+   CHAT PAGE
+ */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  width: 100vh;
+  height: 90vh;
+  margin: 30px auto;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+header {
+  background: #0078ff;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.chat-box {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #fafafa;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  padding: 10px
+}
+
+/* ---------------------------
+   MESSAGE STYLES
+--------------------------- */
+.message {
+  padding: 8px 12px;
+  border-radius: 10px;
+  max-width: 70%;
+  word-wrap: break-word;
+  font-size: 0.95em;
+}
+
+.message.me {
+  text-align: right;
+  background-color: #d1f7c4;
+  border-radius: 10px;
+  padding: 6px;
+  margin: 5px;
+}
+
+.message.received {
+  text-align: left;
+  background-color: #f1f1f1;
+  border-radius: 10px;
+  padding: 6px;
+  margin: 5px;
+}
+
+
+.message.system {
+  text-align: center;
+  font-style: italic;
+  color: #555;
+  width: 100%;
+  background: transparent;
+}
+
+/* Timestamp */
+.timestamp {
+  font-size: 0.8em;
+  color: #666;
+  margin-left: 5px;
+}
+
+/* ---------------------------
+   INPUT AREA
+--------------------------- */
+.chat-controls {
+  padding: 10px;
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid #ccc;
+}
+
+.chat-controls input,
+.chat-controls select,
+.chat-controls button {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.chat-controls button {
+  background: #0078ff;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.chat-controls button:hover {
+  background: #005fcc;
+}
+
+/* ---------------------------
+   GROUP MODAL
+--------------------------- */
+/* Background overlay behind modal */
+#modalOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 99;
+}
+
+/* Modal box */
+#groupModal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  z-index: 100;
+  width: 300px;
+  text-align: center;
+}
+
+#groupModal input {
+  width: 90%;
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+#groupModal button {
+  margin: 5px;
+  padding: 8px 12px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#groupModal button:hover {
+  background-color: #0056b3;
+}
+
