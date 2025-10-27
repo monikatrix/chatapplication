@@ -94,49 +94,46 @@ header {
   padding: 10px
 }
 
-/* ---------------------------
-   MESSAGE STYLES
---------------------------- */
 .message {
-  padding: 8px 12px;
+  display: inline-block;
+  padding: 10px 14px;
   border-radius: 10px;
-  max-width: 70%;
+  max-width: 60%;
   word-wrap: break-word;
   font-size: 0.95em;
+  margin: 6px 0;
 }
 
 .message.me {
-  text-align: right;
-  background-color: #d1f7c4;
-  border-radius: 10px;
-  padding: 6px;
-  margin: 5px;
+  align-self: flex-end;
+  background-color: #0078ff;
+  color: white;
+  border-top-right-radius: 0;
 }
 
 .message.received {
-  text-align: left;
-  background-color: #f1f1f1;
-  border-radius: 10px;
-  padding: 6px;
-  margin: 5px;
+  align-self: flex-start;
+  background-color: #e5e5ea;
+  color: black;
+  border-top-left-radius: 0;
 }
 
-
 .message.system {
-  text-align: center;
+  align-self: center;
   font-style: italic;
-  color: #555;
-  width: 100%;
+  color: #666;
   background: transparent;
+  margin: 5px 0;
 }
 
 /* Timestamp */
 .timestamp {
   font-size: 0.8em;
-  color: #666;
-  margin-left: 5px;
+  color: #999;
+  display: block;
+  margin-top: 3px;
+  text-align: right;
 }
-
 /* ---------------------------
    INPUT AREA
 --------------------------- */

@@ -20,15 +20,14 @@ import java.util.*;
 
 @WebServlet("/signin")
 public class SignIn extends HttpServlet {
-	//maps username ito sessionId
+	//maps username to sessionId
 	private static Map<String, String> sessionMap = new HashMap<>();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-    	System.out.println(new Timestamp(System.currentTimeMillis() + (30 * 60)));
-
     	Gson gson = new Gson();
+    	
     	Map<String, String> credentials = gson.fromJson(req.getReader(),Map.class);
     	String email = credentials.get("email");
     	String password = credentials.get("password");
@@ -73,7 +72,6 @@ public class SignIn extends HttpServlet {
             	String authToken = UUID.randomUUID().toString();
             	final long THIRTY_MINUTES_MS = 30 * 60 * 1000;
             	Timestamp expiryTime = new Timestamp(System.currentTimeMillis() + THIRTY_MINUTES_MS);
-            	System.out.println(expiryTime);
             	
             	PreparedStatement updateStmt = conn.prepareStatement(
             			"UPDATE users SET auth_token=?, token_expiry=? WHERE email=?");

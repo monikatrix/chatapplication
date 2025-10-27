@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.databind.*;
+import com.google.gson.Gson;
 import com.yourcompany.chat.servlet.SignIn;
 import com.yourcompany.chat.util.DBHelper;
 
@@ -17,8 +18,7 @@ public class ChatServerEndpoint {
     private static Map<String, Session> userSessions = new ConcurrentHashMap<>();
     private static Map<String, Group> groups = new ConcurrentHashMap<>();
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
-
+    private static Gson gson = new Gson();
     @OnOpen
     public void onOpen(Session session, EndpointConfig config, @PathParam("username") String username) throws IOException {
     	Map<String,List<String>> headers = (Map<String,List<String>>)config.getUserProperties().get("headers");
@@ -27,17 +27,21 @@ public class ChatServerEndpoint {
     		session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "Invalid session"));
     		return;
     	}
+    	boolean isNewJoin = !userSessions.containsKey(username);
+    	
         userSessions.put(username, session);
         sessions.add(session);
         sendSystem(session, "Welcome " + username + "!");
-        broadcastSystem(username + " joined the chat.");
+        if(isNewJoin) {
+        	broadcastSystem(username + " joined the chat.");
+        }
     }
 
     @OnMessage
     public void onMessage(String message, Session session, @PathParam("username") String username) throws IOException {
     	
         try {
-            Map<String, Object> msgObj = objectMapper.readValue(message, Map.class);
+            Map<String, Object> msgObj = gson.fromJson(message, Map.class);
             String type = (String) msgObj.get("type");
             String content = (String) msgObj.get("content");
 
@@ -100,8 +104,10 @@ public class ChatServerEndpoint {
 	@OnClose
     public void onClose(Session session, @PathParam("username") String username) throws IOException {
         sessions.remove(session);
-        userSessions.remove(username);
-        broadcastSystem(username + " left the chat.");
+        if(userSessions.remove(username)!=null) {
+        	broadcastSystem(username + " left the chat.");        	
+        }
+        System.out.println("WebSocket closed for user: " + username);
     }
 
     @OnError
@@ -134,7 +140,7 @@ public class ChatServerEndpoint {
     }
     private void broadcast(String sender, String message) throws IOException {
     	Map<String, String> msg = Map.of("type","broadcast","sender",sender,"content",message,"timestamp", now());
-    	String json = objectMapper.writeValueAsString(msg);
+    	String json = gson.toJson(msg);
     	
         synchronized (sessions) {
             for (Session s : sessions) {
@@ -148,7 +154,7 @@ public class ChatServerEndpoint {
 
     private void broadcastSystem(String message) throws IOException {
     	Map<String, String> msg = Map.of("type","system","content",message,"timestamp", now());
-    	String json = objectMapper.writeValueAsString(msg);
+    	String json = gson.toJson(msg);
     	
         synchronized (sessions) {
             for (Session s : sessions) {
@@ -162,8 +168,8 @@ public class ChatServerEndpoint {
     private void sendPrivate(String from, String to, String message) throws IOException {
         Session recipient = userSessions.get(to);
         Map<String, String> msg = Map.of("type","private","sender",from,"content",message,"timestamp", now());
-    	String json = objectMapper.writeValueAsString(msg);
-
+    	String json = gson.toJson(msg);
+    	
         if (recipient != null && recipient.isOpen()) {
             recipient.getBasicRemote().sendText(json);
         } else {
@@ -178,7 +184,7 @@ public class ChatServerEndpoint {
         for (String member : recipients) {
         	Session s = userSessions.get(member.trim());
         	if(s!=null && s.isOpen()) {
-        		s.getBasicRemote().sendText(objectMapper.writeValueAsString(msg));
+        		s.getBasicRemote().sendText(gson.toJson(msg));
         	}
         	DBHelper.storeMessage(from, DBHelper.getEmail(from), member, DBHelper.getEmail(member), null, message, "group");
         }
@@ -188,7 +194,7 @@ public class ChatServerEndpoint {
     {
     	if(session!=null && session.isOpen()) {
     		Map<String, String> msg = Map.of("type","system","content",content,"timestamp", now());
-        	session.getBasicRemote().sendText(objectMapper.writeValueAsString(msg));
+        	session.getBasicRemote().sendText(gson.toJson(msg));
     	}
     }
     
@@ -228,7 +234,7 @@ public class ChatServerEndpoint {
         for (String member : g.members) {
             Session s = userSessions.get(member);
             if (s != null && s.isOpen()) {
-                s.getBasicRemote().sendText(objectMapper.writeValueAsString(msg));
+                s.getBasicRemote().sendText(gson.toJson(msg));
             }
         }
         DBHelper.storeMessage(sender, DBHelper.getEmail(sender), null, null, groupName, content, "group-message");
@@ -269,7 +275,7 @@ public class ChatServerEndpoint {
         msg.put("groups", groupNames);
         msg.put("timestamp", now());
 
-        session.getBasicRemote().sendText(objectMapper.writeValueAsString(msg));
+        session.getBasicRemote().sendText(gson.toJson(msg));
     }
 
     private void broadcastGroupListToAll() throws IOException {
@@ -278,7 +284,7 @@ public class ChatServerEndpoint {
         msg.put("type", "group-list");
         msg.put("groups", groupNames);
         msg.put("timestamp", now());
-        String json = objectMapper.writeValueAsString(msg);
+        String json = gson.toJson(msg);
 
         synchronized (sessions) {
             for (Session s : sessions) {
