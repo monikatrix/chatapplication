@@ -7,42 +7,58 @@
 </head>
 <body>
   <div class="chat-container">
-    <header>
-      Chat Application
-      <button id="logoutBtn" style="float:right ;">Logout</button>
-      <button id="createGroupBtn" style="float:left;">➕ Group</button>
-    </header>
-
-    <div class="chat-box" id="chatArea"></div>
-
-    <div class="chat-controls">
-      <label>Type:</label>
-      <select id="messageType">
-        <option value="broadcast">Broadcast</option>
-        <option value="private">Private</option>
-        <option value="group">Group (comma separated)</option>
-        <option value="group-message">Group Message</option>
-      </select>
-
-      <select id="groupSelect">
-        <option value="">-- Select Group --</option>
-      </select>
-
-      <input type="text" id="recipient" placeholder="Recipient(s)">
-      <input type="text" id="message" placeholder="Enter message">
-      <button id="sendBtn">Send</button>
-    </div>
+  	<div class="sidebar">
+  		<div class="sidebar-header">
+  			<div class="app-title">Chat App</div>
+  			<div class="sidebar-actions">
+  				<button id="createGroupBtn" title="Create Group">➕</button>
+  				<button id="logoutBtn" title="Logout">⏻</button>
+  			</div>
+  		</div>
+  		
+  		<div class="sidebar-tabs">
+  			<button class="tab-button active" id="privateTab">Users</button>
+  			<button class="tab-button" id="groupTab">Groups</button>
+  		</div>
+  		
+  		<div id="privateList" class="user-list active-list">
+  		</div>
+  		
+  		<div id="groupList" class="user-list hidden">
+  		</div>
+  	</div>
+  	
+  	<div class="chat-main">
+  		<header class="chat-header">
+  			<div class="chat-info">
+  				<div id="chatName" class="chat-name">Select a chat to start messaging</div>
+  				<div id="lastSeen" class="chat-last-seen"></div>
+  			</div>
+  			<div class="chat-header">
+			  <div class="chat-header-actions">
+			    <button id="addMemberBtn" title="Add Member" class="header-btn">
+			      <i class="fa-solid fa-user-plus"></i> <span>Add</span>
+			    </button>
+			    <button id="removeMemberBtn" title="Remove Member" class="header-btn">
+			      <i class="fa-solid fa-user-minus"></i> <span>Remove</span>
+			    </button>
+			    <button id="deleteMsgBtn" title="Delete Messages" class="header-btn danger">
+			      <i class="fa-solid fa-trash"></i> <span>Clear</span>
+			    </button>
+			  </div>
+			</div>
+  			
+  		</header>
+  		
+  		<div id="chatArea" class="chat-box">
+  		</div>
+  		
+  		<div class="chat-input">
+  			<input type="text" id="messageInput" placeholder="Type a message..."/>
+  			<button id="sendBtn">Send</button>
+  		</div>
+  	</div>
   </div>
-
-  <div id="modalOverlay"></div>
-  <div id="groupModal">
-    <h3>Create Group</h3>
-    <input type="text" id="groupName" placeholder="Group Name"><br><br>
-    <input type="text" id="groupMembers" placeholder="Members (comma separated)"><br><br>
-    <button id="saveGroup">Create</button>
-    <button id="closeModal">Cancel</button>
-  </div>
-
   <script src="js/chat.js"></script>
 </body>
 </html>

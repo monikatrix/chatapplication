@@ -1,10 +1,11 @@
-document.addEventListener("DOMContentLoaded",()=>{
+/*document.addEventListener("DOMContentLoaded",()=>{
 	const username = localStorage.getItem("username");
 	const email = localStorage.getItem("email");
 	  if(username && email){
 		window.location.href = "chat.html";
 	  }
-});
+});*/
+
 document.getElementById("signinForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -26,10 +27,6 @@ document.getElementById("signinForm").addEventListener("submit", async (e) => {
 
 	  
 	  if(response.ok){
-		const data = await response.json();
-		localStorage.setItem("username",data.username);
-		localStorage.setItem("email", data.email);
-		document.cookie = `username=${data.username}; path=/;max-age=1800`;
 		alert("Login successful!");
 		window.location.href="chat.html";
 		

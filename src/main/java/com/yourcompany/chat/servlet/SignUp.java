@@ -6,6 +6,10 @@ import com.yourcompany.chat.util.DBHelper;
 import com.yourcompany.chat.util.PasswordUtil;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,10 +19,11 @@ import java.util.Map;
 
 @WebServlet("/signup")
 public class SignUp extends HttpServlet {
+	private static final Logger logger = LoggerFactory.getLogger(SignUp.class);
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-			resp.setContentType("text/plain");
+			resp.setContentType("application/json");
 			
 			Gson gson = new Gson();
 			Map<String, String> userData = gson.fromJson(
@@ -32,21 +37,13 @@ public class SignUp extends HttpServlet {
 	    	String plainPassword = userData.get("password");
 
 			if(username==null || email==null || plainPassword == null || plainPassword.isEmpty()) {
+				logger.warn("Invalid signup input: username={}, email={}",username, email);
 				resp.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
 				resp.getWriter().write("Invalid input");
 				return;
 			}
 			
-			String hashedPassword;
-			try {
-			    hashedPassword = PasswordUtil.hashPassword(plainPassword);
-			} catch (Exception ex) {
-			    ex.printStackTrace();
-			    resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			    resp.getWriter().write("{\"error\":\"Password hashing failed\"}");
-			    return;
-			}
-
+			String hashedPassword = PasswordUtil.hashPassword(plainPassword);;
 			
 			try(Connection conn = DBHelper.getConnection()){
 				PreparedStatement checkStmt = conn.prepareStatement("SELECT id FROM users WHERE email=?");
@@ -54,8 +51,9 @@ public class SignUp extends HttpServlet {
 				ResultSet rs = checkStmt.executeQuery();
 				
 				if(rs.next()) {
+					logger.info("User already exists: {}", email);
 					resp.setStatus(HttpServletResponse.SC_CONFLICT);
-					resp.getWriter().write("User already exists");
+					gson.toJson(Map.of("error", "User already exists"), resp.getWriter());
 					return;
 				}
 				
@@ -65,6 +63,8 @@ public class SignUp extends HttpServlet {
 	            stmt.setString(2, email);
 	            stmt.setString(3, hashedPassword);
 	            stmt.executeUpdate();
+	            
+	            logger.info("New user registered successfully: {}",email);
 
 	            gson.toJson(Map.of(
 	            		"status", "success",
@@ -72,10 +72,10 @@ public class SignUp extends HttpServlet {
 	            		),resp.getWriter());
 				
 			}
-			catch(SQLException e) {
-				e.printStackTrace();
+			catch(Exception e) {
+				logger.error("Error during signup process", e);
 				resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-				gson.toJson(Map.of("error","Database error"),resp.getWriter());
+				gson.toJson(Map.of("error","Internal server error"),resp.getWriter());
 			}
 			
 	}
